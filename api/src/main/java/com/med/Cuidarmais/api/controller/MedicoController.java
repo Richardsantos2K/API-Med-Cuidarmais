@@ -3,6 +3,7 @@ package com.med.Cuidarmais.api.controller;
 import com.med.Cuidarmais.api.medico.DadosCadastroMed;
 import com.med.Cuidarmais.api.medico.Medico;
 import com.med.Cuidarmais.api.medico.MedicoRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +34,7 @@ public class MedicoController {
                     indicando que as operações dentro delas são transacionais, ou seja, elas serão executadas como uma única unidade de trabalho
                      que é confirmada (commit) ou revertida (rollback) automaticamente se ocorrer algum erro.
                      Isso é comumente usado em acesso a bancos de dados para garantir a consistência dos dados.*/
-    public void cadastrar(@RequestBody DadosCadastroMed dados){
+    public void cadastrar(@RequestBody @Valid DadosCadastroMed dados){
 
         repository.save(new Medico(dados));
     } /*

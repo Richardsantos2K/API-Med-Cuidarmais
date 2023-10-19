@@ -1,0 +1,57 @@
+iremos adicionar a tabela telefone ao nosso banco de dados
+
+iremos entrar dentro do DTO DadosCadastroMedico e vamos colocar um novo atributo obrigatorio com a anotação @NotBlank
+
+e dentro da classe Medico vamos adicionar o um atributo do tipo private String telefone
+
+e com isso iremos colocar dentro do contrutor Da classe Medico o atributo telefone:
+
+    public Medico(DadosCadastroMed dados) {
+        this.nome = dados.nome();
+        this.email = dados.email();
+        this.telefone = dados.telefone(); <---
+        this.crm = dados.crm();
+        this.especialidade = dados.especialidade();
+        this.endereco = new Endereco(dados.endereco());
+    }
+
+    com isso esta feito a alteração no codigo da nossa api
+
+    MAS E AGORA, OQUE FAREMOS PARA MEXER NO BANCO DE DADOS E CRIAR A NOVA COLUNA ?
+
+    não iremos mexer diretamente no banco de dados pois estamos com as migrations salvas ja, e se mudacemos o codigo da tabela iria dar conflito
+
+    ao inves disso criaremos uma nova migration que é a versão 2 do banco de dados
+
+    então recapitulando ATENÇÃO:
+
+    não podemos fazer alterações diretas no codigo do banco de dados porque a migration ja foi executada e salva no historico do flyway
+
+    as migration tem que funcionar de maneira imutavel, ou seja, nunca podem ser alteradas ou modificadas
+    se precisamos fazer uma mudança no banco de dados não mexemos na migration 1, criamos uma nova migration
+
+    então faremos isso dentro da pasta db.migration MAS ESPERE AI:
+
+    ATENÇÃO: ao mexer com migration é de estrema importancia que se desligue e pare o processo da api
+
+    feito isso estamos tudo certo para criar
+
+    etapas:
+
+    dentro da pasta db.migration crie um file com o nome bem especifico: V2__alter-table-medicos-add-column-telefone.sql
+
+    apos isso coloque o seguinte comando sql para adicionar mais uma coluna: alter table medicos add telefone varchar(20) not null;
+
+    estamos pedindo para alterar a tabela medicos, adicionar uma coluna telefone obrigatoria por isso not null e que n podera passar de 20 caracteres
+
+    com isso esta feita a mudança :D
+
+    saida de sucesso do terminal:
+
+    2023-10-19T11:35:28.631-03:00  INFO 14476 --- [  restartedMain] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost/cuidarmaismed_api (MySQL 8.0)
+    2023-10-19T11:35:28.678-03:00  INFO 14476 --- [  restartedMain] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.024s)
+    2023-10-19T11:35:28.693-03:00  INFO 14476 --- [  restartedMain] o.f.core.internal.command.DbMigrate      : Current version of schema `cuidarmaismed_api`: 1
+    2023-10-19T11:35:28.707-03:00  INFO 14476 --- [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema `cuidarmaismed_api` to version "2 - alter-table-medicos-add-column-telefone"
+    2023-10-19T11:35:28.754-03:00  INFO 14476 --- [  restartedMain] o.f.core.internal.command.DbMigrate      : Successfully applied 1 migration to schema `cuidarmaismed_api`, now at version v2 (execution time 00:00.021s)
+
+
