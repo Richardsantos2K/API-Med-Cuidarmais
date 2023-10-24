@@ -90,11 +90,11 @@ Page novo:
           ira montrar uma Query com esse esquema de paginação
 
           Page:
-          Page é para devollver as informações da nossa paginação.
+          Page é para devolver as informações da nossa paginação.
           Alem de devolver a lista contendo os dados dos medicos,
           ele vai devolver tambem os dados da paginação
 
-          Nosso generics de Page ainda sera DdosListagemMedico
+          Nosso generics de Page ainda sera DadosListagemMedico
 
         * */
 
