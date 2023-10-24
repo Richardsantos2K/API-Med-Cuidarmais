@@ -1,0 +1,105 @@
+@RestController
+@RequestMapping("/medicos")
+public class MedicoController {
+
+    /*pegaremos o repositoty e mandaremos percistir no banco de dados.
+
+      precisamos da classe da interface repository.
+
+      e por isso declaramos como sendo um atributo da classe controller.
+
+      Com isso faremos com que ao insves de nos instanciarmos esta classe
+      o proprio spring ira instanciar para gente.
+
+      Isso se chama INJEÇÃO DE DEPENDÊNCIAS
+     */
+
+    @Autowired // feito isso ele ira saber que é ele que ira instanciar e passar este atributo repository dentro da nossa classe controller
+    private MedicoRepository repository;
+
+    @PostMapping
+    @Transactional/*@Transactional é uma anotação em Java usada para marcar métodos ou classes,
+                    indicando que as operações dentro delas são transacionais, ou seja, elas serão executadas como uma única unidade de trabalho
+                     que é confirmada (commit) ou revertida (rollback) automaticamente se ocorrer algum erro.
+                     Isso é comumente usado em acesso a bancos de dados para garantir a consistência dos dados.*/
+    public void cadastrar(@RequestBody @Valid DadosCadastroMed dados){
+
+        repository.save(new Medico(dados));
+    } /*
+    Essa linha está salvando uma nova instância de Medico no repositório (em um banco de dados)
+     usando o método save do objeto repository. ou seja, sempre que tiver um novo medico passara aqui para salvar.
+     A instância de Medico é criada com base nos dados fornecidos no parâmetro dados
+      e passada diretamente para o repositório para ser persistida.
+      Isso é uma operação comum ao usar frameworks de persistência de dados, como o Spring Data JPA,
+      para armazenar informações em um banco de dados.
+    */
+
+
+List antigo:
+<--------------------------------------------------------------------------------------------------------------->
+    @GetMapping
+    public List<Medico> listar(){ /* diferente do metodo cadastrar o retorno deste não pode ser void, pois,
+    estamos estamos querendo que este metodo devolva uma lista quando o cliente pedir*/
+
+        return repository.findAll(); //pedindo para retornar o banco de dados
+
+        /*
+            findAll ja é um metodo pre definido da jpa então apos repository chamamos este metodo
+            para retornar o banco de dados
+
+            OBS:  de acordo com o nosso manual, o metodo listar
+            ira devolver apenas: Nome, E-mail, CRM e Especialidade
+            então implementaremos isso
+        */
+
+    }
+<--------------------------------------------------------------------------------------------------------------->
+
+
+List novo:
+<--------------------------------------------------------------------------------------------------------------->
+    @GetMapping
+    public List<DadosListagemMedico> listar(){ /* diferente do metodo cadastrar o retorno deste não pode ser void, pois,
+                                               estamos querendo que este metodo devolva uma lista quando o cliente pedir*/
+
+    return repository.findAll().stream().map(DadosListagemMedico::new).toList(); //pedindo para retornar o banco de dados
+          //stream().map(DadosListagemMedico::new) mapeia o contrutor de DadosListagemMedico
+          //.toList converte em uma lista
+          //com isso convertemos uma Lista de Medico para DadosListagemMedico
+
+    }
+<----------------------------------------------------------------------------------------------------------------->
+
+
+como queremos ordenar a listagem de cima para baixo em ordem alfabética e tambem
+ter um limite de 10 medicos por pagina, iremos implementar esta funcionalidade
+
+Page novo:
+<--------------------------------------------------------------------------------------------------------------->
+    @GetMapping
+    public Page<DadosListagemMedico> listar(Pageable paginacao){//Pageable interface do proprio spring
+
+        return repository.findAll(paginacao).map(DadosListagemMedico::new);
+
+        /*
+        * Pageble:
+          Pageble é uma interface do proprio spring que faz a paginação
+
+          No repository existe uma sobre-carga do metodo findAll que recebe o
+          Pageble como parametro, e com isso o spring automaticamente
+          ira montrar uma Query com esse esquema de paginação
+
+          Page:
+          Page é para devollver as informações da nossa paginação.
+          Alem de devolver a lista contendo os dados dos medicos,
+          ele vai devolver tambem os dados da paginação
+
+          Nosso generics de Page ainda sera DdosListagemMedico
+
+        * */
+
+    }
+<--------------------------------------------------------------------------------------------------------------->
+
+não precisamos mais do stream(), pois o findAll(paginacao) ele devolve um Page e o Page ja tem o metodo map diretamente, e tambem, não precisamos mais do toList(),
+pois, quando chamamos o metodo ele ja faz a conversão e devolve um Page do DTO automaticamente
