@@ -3,7 +3,7 @@ package com.med.Cuidarmais.api.medico;
 import com.med.Cuidarmais.api.endereco.DadosEndereco;
 import jakarta.validation.constraints.NotNull;
 
-public record DadosAtualizacaoMedicos(
+public record DadosAtualizacaoMed(
         @NotNull
         Long id,
 

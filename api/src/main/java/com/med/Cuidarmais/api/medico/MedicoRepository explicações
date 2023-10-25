@@ -1,0 +1,27 @@
+    // passaremos os generics, passaremos dois objetos
+    //O tipo de entidade que este Repository ira trabalhar é Medico
+    //O tipo de atributo da chave primaria desta entidade que é Long, então passamos Long como parametro
+
+    /*
+    * Isto é uma interface que esta herdando de JpaRepository
+    * Então todos os métodos que temos nesta interface e nas outras que esta interface esta herdando
+    * a gente ganha automaticamente todos os metodos e atributos
+    *
+    * Tudo isto o Spring faz automaticamente para gente
+    *
+    * agora podemos usar este repository la no nosso controller
+    * */
+
+
+    Page<Medico> findAllByAtivoTrue(Pageable paginacao);
+    // como podemos apenas traser medicos que estão ativos o spring nos deixa fazer algo fascinante
+    que é a criação de metodos findAll, neste metodo nos estamos implementando a seguinte coisa:
+
+    se o medico tiver ativo (true) ao chamar o metodo excluir o ele saira da lista que criamos com esta validação do
+    novo metodo que criamos que é o findAllByAtivoTrue que se encontra dentro do controller
+
+
+    <--------------------------------------------------------------->
+    ATENÇÃO:
+    explicaçoes da nova atualização no MedicoController explicações
+    <--------------------------------------------------------------->

@@ -1,0 +1,130 @@
+nesta nova migration estamos alterando a tabela medicos, pois adicionaremos uma coluna chamada ativo.
+
+que por sua vez tem a seguinte logica, se ativo for = 1, seguinifica que esta ativado
+se ativo for = 2 significa que esta inativo, e não aparecera mais na lista
+
+o codigo é este:
+
+alter table medicos add ativo tinyint;
+update medicos set ativo = 1;
+
+vamos ver a coluna:
+
+USE cuidarmaismed_api;
+
+select ativo from medicos;
+
+terminal:
+
+mysql> select ativo from medicos;
++-------+
+| ativo |
++-------+
+|     1 |
+|     1 |
+|     1 |
+|     1 |
+|     0 |
+|     1 |
+|     1 |
++-------+
+
+vamos ver o banco de dados em geral agora
+
+select * from medicos;
+
+terminal:
+
+mysql> select * from medicos;
++----+--------------------------+---------------------------------+--------+---------------+------------+-----------+----------+-------------+--------+----+-----------+--------------+-------+
+| id | nome                     | email                           | crm    | especialidade | logradouro | bairro    | cep      | complemento | numero | uf | cidade    | telefone     | ativo |
++----+--------------------------+---------------------------------+--------+---------------+------------+-----------+----------+-------------+--------+----+-----------+--------------+-------+
+|  9 | Rogerio                  | rogerin157@gamil.com            | 444555 | CARDIOLOGIA   | rua 6      | pimenta   | 99776653 | NULL        | 40     | SP | tucuruvi  |              |     1 |
+| 11 | Fabricio rocha da silva  | rogerin150@gamil.com            | 444556 | CARDIOLOGIA   | rua 8      | coxinha   | 44445555 | NULL        | 4      | DF | abobrinha | 11 923467443 |     1 |
+| 12 | lucas                    | lucasdasilva1500@gamil.com      | 333555 | DERMATOLOGIA  | rua 17     | carmim    | 332556   | NULL        | 50     | SP | sao paulo |              |     1 |
+| 16 | Luquinha                 | luca2000@gamil.com              | 435212 | DERMATOLOGIA  | rua 20     | Freguesia | 64657    | NULL        | 17     | SP | sao paulo |              |     1 |
+| 17 | Luca                     | silva2000@gamil.com             | 435313 | DERMATOLOGIA  | rua 50     | Freguesia | 64634    | NULL        | 50     | SP | sao paulo | 11 988674520 |     0 |
+| 19 | Gabriel Silva            | gabrielsilva2000@cuidarmais.med | 123999 | ORTOPEDIA     | rua 200    | Pirituba  | 64634342 | NULL        | NULL   | SP | sao paulo | 11 974623007 |     1 |
+| 23 | Hebert da silva gonzales | Hebert2000@cuidarmais.med       | 694523 | DERMATOLOGIA  | rua 185    | Lapa      | 02178156 | NULL        | NULL   | SP | sao paulo | 11 927867443 |     1 |
++----+--------------------------+---------------------------------+--------+---------------+------------+-----------+----------+-------------+--------+----+-----------+--------------+-------
+
+como pode ver esta linha:
+
+| 17 | Luca                     | silva2000@gamil.com             | 435313 | DERMATOLOGIA  | rua 50     | Freguesia | 64634    | NULL        | 50     | SP | sao paulo | 11 988674520 |     0 |
+
+seguinifica que este medico esta inativo e por tanto n aparecera na lista:
+
+{
+    "content": [
+        {
+            "id": 11,
+            "nome": "Fabricio rocha da silva",
+            "email": "rogerin150@gamil.com",
+            "crm": "444556",
+            "especialidade": "CARDIOLOGIA"
+        },
+        {
+            "id": 19,
+            "nome": "Gabriel Silva",
+            "email": "gabrielsilva2000@cuidarmais.med",
+            "crm": "123999",
+            "especialidade": "ORTOPEDIA"
+        },
+        {
+            "id": 23,
+            "nome": "Hebert da silva gonzales",
+            "email": "Hebert2000@cuidarmais.med",
+            "crm": "694523",
+            "especialidade": "DERMATOLOGIA"
+        },
+        {
+            "id": 12,
+            "nome": "lucas",
+            "email": "lucasdasilva1500@gamil.com",
+            "crm": "333555",
+            "especialidade": "DERMATOLOGIA"
+        },
+        {
+            "id": 16,
+            "nome": "Luquinha",
+            "email": "luca2000@gamil.com",
+            "crm": "435212",
+            "especialidade": "DERMATOLOGIA"
+        },
+        {
+            "id": 9,
+            "nome": "Rogerio",
+            "email": "rogerin157@gamil.com",
+            "crm": "444555",
+            "especialidade": "CARDIOLOGIA"
+        }
+    ],
+    "pageable": {
+        "pageNumber": 0,
+        "pageSize": 10,
+        "sort": {
+            "empty": false,
+            "unsorted": false,
+            "sorted": true
+        },
+        "offset": 0,
+        "paged": true,
+        "unpaged": false
+    },
+    "last": true,
+    "totalPages": 1,
+    "totalElements": 6,
+    "size": 10,
+    "number": 0,
+    "sort": {
+        "empty": false,
+        "unsorted": false,
+        "sorted": true
+    },
+    "first": true,
+    "numberOfElements": 6,
+    "empty": false
+}
+
+em breve mais atualizações ;D
+

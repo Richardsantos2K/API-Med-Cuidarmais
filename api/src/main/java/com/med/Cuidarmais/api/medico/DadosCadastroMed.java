@@ -31,41 +31,4 @@ public record DadosCadastroMed(
         @Valid
         DadosEndereco endereco) {
 
-
-        /*
-         * Bean validation:
-         *
-         * Ao inves de fazer um IF e ELSE para essas validações dos campos
-         *
-         * colocamos as anotações do Bean validation, onde o proprio spring vai fazer essa validação
-         * para a gente
-         * */
-
-
-
-        /*
-         * @Pettern:
-         *
-         *A anotação @Pattern em Java é usada para aplicar validações de padrão a campos de texto.
-         * Ela verifica se o conteúdo do campo corresponde a um padrão especificado por uma expressão regular.
-         * Se o conteúdo não corresponder ao padrão, uma validação de erro é acionada.
-         * Por exemplo, @Pattern(regexp = "\\d{4,6}") validaria se o campo contém entre 4 e 6 dígitos numéricos.
-         *
-         * regexp:
-         *
-         * Em resumo, regexp (abreviação de "expressão regular") é uma sequência de caracteres que define um padrão de busca.
-         * Em Java, regexp é frequentemente usado em contextos de validação, busca e manipulação de texto para verificar se o texto atende a um padrão específico.
-         * Isso é útil para tarefas como validação de entrada de dados, pesquisa de palavras-chave e substituição de texto com base em critérios específicos.
-         * Expressões regulares fornecem uma maneira poderosa de descrever e encontrar padrões de texto em strings.
-         *
-         *
-         * //d{} :
-         *
-         * Em resumo, \\d{} em uma expressão regular é usado para representar dígitos numéricos em um padrão.
-         * O \\d representa um dígito, e as chaves {} com um número dentro definem quantas vezes o dígito deve ocorrer.
-         * No exemplo \\d{4,6}, isso significa que o padrão aceita de 4 a 6 dígitos numéricos consecutivos.
-         * */
-
-
-
 }

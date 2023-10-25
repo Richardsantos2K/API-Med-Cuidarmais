@@ -1,12 +1,3 @@
-package com.med.Cuidarmais.api.medico;
-
-import com.med.Cuidarmais.api.endereco.Endereco;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 @Table(name = "medicos") // cria uma tabela
 @Entity(name = "Medico") // cria uma coluna ou entidade
 @Getter //é uma anotação usada em Java para gerar automaticamente métodos de acesso (getters) para campos de uma classe.
@@ -16,7 +7,9 @@ import lombok.NoArgsConstructor;
 public class Medico {
 
     @Id // id da tabela
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) /*A anotação @GeneratedValue(strategy = GenerationType.IDENTITY)
+                                                          especifica a geração automática de valores de chave primária com base em identidade,
+                                                          geralmente para colunas autoincrementáveis em bancos de dados.*/
     private Long id;
 
 
@@ -28,7 +21,9 @@ public class Medico {
 
 
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)/*A anotação @Enumerated(EnumType.STRING) é usada para mapear uma enumeração (enum) em um banco de dados
+                                  de forma que os valores sejam armazenados como strings, em vez de inteiros, tornando os dados mais legíveis.
+                                 */
     private Especialidade especialidade;
 
     private Boolean ativo;
@@ -46,10 +41,15 @@ public class Medico {
         this.telefone = dados.telefone();
         this.crm = dados.crm();
         this.especialidade = dados.especialidade();
-        this.endereco = new Endereco(dados.endereco());
+        this.endereco = new Endereco(dados.endereco());/*Nesse construtor, o atributo "endereco" está instanciado porque ele
+         está sendo inicializado com um novo objeto Endereco baseado nos dados fornecidos no parâmetro dados.endereco().
+          Isso significa que sempre que você criar uma instância de Medico usando esse construtor,
+          um novo objeto Endereco será criado com base nas informações do endereço fornecidas em dados.endereco()
+           e atribuído ao atributo endereco da instância de Medico.
+           Isso pode ser útil para garantir que cada médico tenha uma instância única de Endereco.*/
     }
 
-    public void atualizarInformacoes(DadosAtualizacaoMed dados) {// atualiza informações
+    public void atualizarInformacoes(DadosAtualizacaoMedicos dados) {// atualiza informações
         if(dados.nome() != null){ //se o dados nome não tiver null podera atualizar
         this.nome = dados.nome();
         }
@@ -68,3 +68,9 @@ public class Medico {
         this.ativo = false;
     }
 }
+
+
+<--------------------------------------------------------------->
+ATENÇÃO:
+explicaçoes da nova atualização no MedicoController explicações
+<--------------------------------------------------------------->

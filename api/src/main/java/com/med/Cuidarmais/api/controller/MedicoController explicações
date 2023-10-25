@@ -103,3 +103,149 @@ Page novo:
 
 não precisamos mais do stream(), pois o findAll(paginacao) ele devolve um Page e o Page ja tem o metodo map diretamente, e tambem, não precisamos mais do toList(),
 pois, quando chamamos o metodo ele ja faz a conversão e devolve um Page do DTO automaticamente
+
+
+
+
+
+
+DIA 25/10/2023
+<------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+ATENÇÃO:
+
+novas alterações:
+
+1.Atualizando dados do medico:
+
+para alterar a informaçoes do medico, dentro da regra de negocio pederos atualizar apenas:
+nome, telefone e endereço.
+
+então criamos um DTO record com o nome DadosAtualizacaoMed
+
+e colocamos como parametro o Long Id com uma anotação @NotNull pois é obrigatorio e não é uma String,
+o nome, o telefone e o endereco todos do tipo String
+
+apos isso fizemos um contrutor dentro da classe medicos:
+
+    public void atualizarInformacoes(DadosAtualizacaoMed dados) {// atualiza informações
+        if(dados.nome() != null){ //se o dados nome não tiver null podera atualizar
+        this.nome = dados.nome();
+        }
+
+        if (dados.telefone() != null){
+            this.telefone = dados.telefone();
+        }
+
+        if (dados.endereco() != null){
+            this.endereco.atualizarInformacoes(dados.endereco());
+        }
+
+    }
+
+onde se não for null sera atualizado os dados
+
+usamos este mesmo conceito na Classe Endereco no package endereco pois estamos usando
+todos os Atributos de Endereco dentro do Medico:
+
+  public void atualizarInformacoes(DadosEndereco dados) {
+        if (dados.logradouro() != null){
+            this.logradouro = dados.logradouro();
+        }
+
+        if (dados.bairro() != null){
+            this.bairro = dados.bairro();
+        }
+
+        if (dados.cep() != null){
+            this.cep = dados.cep();
+        }
+
+        if (dados.numero() != null){
+            this.numero = dados.numero();
+        }
+
+        if (dados.complemento() != null){
+            this.complemento = dados.complemento();
+        }
+
+        if (dados.cidade() != null){
+            this.cidade = dados.cidade();
+        }
+
+        if (dados.uf() != null){
+            this.uf = dados.uf();
+        }
+    }
+
+    apos isso conseguiremos implementar o metodo atualizar dentro do controller:
+
+        @PutMapping
+        @Transactional
+        public void atualizar(@RequestBody @Valid DadosAtualizacaoMed dados){
+
+            var medico = repository.getReferenceById(dados.id()); // método getReferenceById é usado para buscar pelo Id
+            medico.atualizarInformacoes(dados);
+
+        }
+
+        como pode ver criamos uma variavel medico que recebe repository e por sua vez ira puxar dados (Id) dentro do nosso
+        banco, apos isso medico ira efetuar o metodo atualizarInformacoes(dados) que recebera como parametro dados para a atualização
+        do banco de dados
+
+        por se tratar de uma atualização usamos o @PutMapping
+        e por ter leitura de dados usamos o @Transactional
+
+
+
+
+2.inativando medico:
+
+alteramos o metodo de listagem com o findAllByAtivoTrue que funcionara como boolean
+e criamos um metodo excluir
+
+neste metodo excluir ao inves de excluirmos o medico diretamente no banco de dados e perder suas informaçoes com este codigo aqui:
+
+
+@DeleteMapping("/{id}")
+@Transactional
+public void excluir(@PathVariable Long id){
+  repository.deleteById(id);
+}
+
+simplesmente implementamos na nossa api as seguintes coisas:
+
+1.Criamos um metodo dentro de medico que ira dizer que o ativo sera falso ao chamar ele:
+
+    public void excluir() { // coloca o atributo ativo igual a false
+        this.ativo = false;
+    }
+
+2.Criamos um novo findAll dentro do MedicoRepository para que o medico inativo não apareça na lista:
+
+public interface MedicoRepository extends JpaRepository<Medico, Long> {
+    Page<Medico> findAllByAtivoTrue(Pageable paginacao);
+}
+
+3. e dentro do metodo de listagem caso o metodo ativado esteja false colocamos o findAllByAtivoTrue que criamos para que o medico
+cadastrado não apareça mais nas listas:
+
+    @GetMapping
+    public Page<DadosListagemMedico> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){//Pageable interface do proprio spring
+        return repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
+
+    }
+
+4.criamos uma nova coluna no banco de dados chamado Ativo:
+
+alter table medicos add ativo tinyint;
+update medicos set ativo = 1;
+
+todo ativo que estiver 1 significa que na coluna ele esta ativo, se tiver zero sera descrito que estara inativo.
+<------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+
+
+
+
+
+
