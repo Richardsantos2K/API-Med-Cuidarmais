@@ -1,9 +1,6 @@
 package com.med.Cuidarmais.api.controller;
 
-import com.med.Cuidarmais.api.medico.DadosCadastroMed;
-import com.med.Cuidarmais.api.medico.DadosListagemMedico;
-import com.med.Cuidarmais.api.medico.Medico;
-import com.med.Cuidarmais.api.medico.MedicoRepository;
+import com.med.Cuidarmais.api.medico.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,5 +27,15 @@ public class MedicoController {
         return repository.findAll(paginacao).map(DadosListagemMedico::new);
 
     }
+
+    @PutMapping
+    @Transactional
+    public void atualizar(@RequestBody @Valid DadosAtualizacaoMedicos dados){
+
+        var medico = repository.getReferenceById(dados.id());
+        medico.atualizarInformacoes(dados);
+
+    }
+
 
 }
