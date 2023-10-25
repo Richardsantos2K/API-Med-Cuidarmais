@@ -1,7 +1,7 @@
 nesta nova migration estamos alterando a tabela medicos, pois adicionaremos uma coluna chamada ativo.
 
 que por sua vez tem a seguinte logica, se ativo for = 1, seguinifica que esta ativado
-se ativo for = 2 significa que esta inativo, e não aparecera mais na lista
+se ativo for = 0 significa que esta inativo, e não aparecera mais na lista
 
 o codigo é este:
 
