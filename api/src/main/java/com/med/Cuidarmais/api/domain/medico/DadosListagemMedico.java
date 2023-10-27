@@ -1,4 +1,4 @@
-package com.med.Cuidarmais.api.medico;
+package com.med.Cuidarmais.api.domain.medico;
 
 public record DadosListagemMedico(Long id, String nome, String email, String crm, Especialidade especialidade) {
 

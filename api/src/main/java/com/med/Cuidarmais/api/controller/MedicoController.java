@@ -1,6 +1,6 @@
 package com.med.Cuidarmais.api.controller;
 
-import com.med.Cuidarmais.api.medico.*;
+import com.med.Cuidarmais.api.domain.medico.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,7 +25,6 @@ public class MedicoController {
     @GetMapping
     public Page<DadosListagemMedico> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){//Pageable interface do proprio spring
         return repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
-
     }
 
     @PutMapping

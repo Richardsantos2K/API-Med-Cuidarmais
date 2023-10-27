@@ -1,6 +1,6 @@
-package com.med.Cuidarmais.api.medico;
+package com.med.Cuidarmais.api.domain.medico;
 
-import com.med.Cuidarmais.api.endereco.Endereco;
+import com.med.Cuidarmais.api.domain.endereco.Endereco;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

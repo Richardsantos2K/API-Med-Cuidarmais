@@ -1,4 +1,4 @@
-package com.med.Cuidarmais.api.endereco;
+package com.med.Cuidarmais.api.domain.endereco;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
