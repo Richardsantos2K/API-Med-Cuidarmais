@@ -1,6 +1,10 @@
 package com.med.Cuidarmais.api.controller;
 
 import com.med.Cuidarmais.api.domain.paciente.*;
+import com.med.Cuidarmais.api.domain.paciente.dto.DadosAtualizacaoPaciente;
+import com.med.Cuidarmais.api.domain.paciente.dto.DadosCadastroPaciente;
+import com.med.Cuidarmais.api.domain.paciente.dto.DadosListagemPaciente;
+import com.med.Cuidarmais.api.domain.paciente.repository.PacienteRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

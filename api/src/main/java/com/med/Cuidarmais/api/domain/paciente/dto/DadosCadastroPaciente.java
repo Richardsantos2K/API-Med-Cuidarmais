@@ -1,4 +1,4 @@
-package com.med.Cuidarmais.api.domain.paciente;
+package com.med.Cuidarmais.api.domain.paciente.dto;
 
 import com.med.Cuidarmais.api.domain.endereco.DadosEndereco;
 import jakarta.validation.Valid;

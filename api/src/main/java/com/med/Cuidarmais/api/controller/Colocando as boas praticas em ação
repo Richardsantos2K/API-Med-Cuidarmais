@@ -1,0 +1,268 @@
+Faremos as boas práticas de uma api em relação ao protocolo http,
+faremos tambem alguns ajustes nas classes controllers da api,
+para seguir boas praticas do protocolo http, tanto ao retorno dos codigos http quanto as respostas que a api devolve
+
+para isso teremos que mexer nos controllers como descrito
+
+estamos seguindo uma das boas praticas do protocolo HTTP que é
+utilizar os verbos http para listar, deletar, atualizar e adicionar medico e pessoas.
+Isso tudo de acordo com a requisição, mas, não só verbos do protocolo http e a url que são importantes, mas sim,
+tambem ter um cuidado em relação ao tratamento do retorna da API nas requisições
+
+as requisições funcionam normalmente exmeplo:
+
+disparamos a requisição de excluir médicos.
+
+colocamos o caminho http://localhost:8080/medicos/2 e disparamos a requisição.
+
+quando disparamos ela retorna status 200 OK.
+
+a requisição em si foi efetuada com sucesso e no corpo da resposta ele vem vazio
+
+mas as boas praticas nem sempre são devolver status 200
+
+no metodo excluir por exemplo o status certo para retornar na api é 204.
+onde foi processada mas não tem conteudo ou seja não tem um corpo
+
+para isso iremos colocar o ResponseEntity em ação em cada metodo:
+
+DELETE excluir:
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity excluir(@PathVariable Long id){
+        //deixar como inativo
+        //exclusão logica
+        var medico = repository.getReferenceById(id);
+        medico.excluir();
+
+        return ResponseEntity.noContent().build();
+
+    }
+
+ResponseEntity.noContent().build(), você está dizendo que a resposta da sua API será um código de status "204 No Content"
+sem corpo de resposta. Isso é útil quando você deseja confirmar que uma operação foi executada com sucesso,
+mas não precisa retornar dados adicionais no corpo da resposta.
+
+Aqui está o que cada parte do código faz:
+
+ResponseEntity: É uma classe do Spring Framework que representa uma resposta HTTP.
+Ela permite configurar o código de status, cabeçalhos e o corpo da resposta.
+
+.noContent(): Este é um método estático de fábrica da classe ResponseEntity.
+Ele cria uma instância de ResponseEntity com um código de status "204 No Content".
+
+.build(): Este método é usado para construir a instância final do ResponseEntity.
+
+
+PUT atualizar:
+
+    @PutMapping
+    @Transactional
+    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoMed dados){
+
+        var medico = repository.getReferenceById(dados.id()); // método getReferenceById é usado para buscar pelo Id
+        medico.atualizarInformacoes(dados);
+
+    }
+
+
+GET listar:
+
+    @GetMapping
+    public ResponseEntity<Page<DadosListagemMedico>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){//Pageable interface do proprio spring
+         var page = repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
+
+         return ResponseEntity.ok(page);
+    }
+
+    Como generics do ResponseEntity colocamos o Page, após isso criamos uma variavel
+    para ter onde armazenar o resultado do metodo e em seguida retornamos o
+    ResponseEntity como status 200 ok e colocamos a variavel como parametro desse Ok
+
+    return ResponseEntity.ok(page);
+
+    A chamada ResponseEntity.ok(page)
+    é usada para retornar uma resposta HTTP com um código de status "200 OK"
+    e um corpo de resposta que é representado pelo objeto page.
+
+    Aqui está o que cada parte do código faz:
+
+    ResponseEntity: É uma classe do Spring Framework que representa uma resposta HTTP.
+    Ela permite configurar o código de status, cabeçalhos e o corpo da resposta.
+
+    .ok(page): Este é um método estático de fábrica da classe ResponseEntity.
+    Ele cria uma instância de ResponseEntity com um código de status "200 OK"
+    e define o corpo da resposta como o objeto page.
+
+    Portanto, ao retornar ResponseEntity.ok(page),
+    você está dizendo que a resposta da sua API é uma resposta de sucesso com um código de status "200 OK",
+    e o conteúdo do objeto page será retornado como o corpo da resposta.
+    Isso é comum quando você deseja retornar dados para o cliente como parte da resposta da sua API, por exemplo,
+    ao buscar recursos de um banco de dados e retorná-los no corpo da resposta.
+
+
+POST atualizar:
+
+iremos fazer a mesma coisa que no listar, ResponseEntity.ok(page).
+Iriamos colocar medico, mas, LEMBRE-SE:
+
+NÃO É RECOMENDADO DEVOLVER E RECEBER ENTIDADES JPA NO CONTROLLER.
+
+Então aqui dentro: ResponseEntity.ok(x) eu tenho que devolver um DTO
+
+neste metodo como parametro estamos utilizando o DadosAtualizarMedico como parametro
+mas ele é incompleto, então como queremos devolver todas as informações de medico criaremos outro DTO
+para representar os dados de um medico sendo atualizado então instanciaremos assim:
+
+return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
+
+só que, ainda não existe esse DTO então o criaremos agora:
+
+
+
+package com.med.Cuidarmais.api.medico;
+
+import com.med.Cuidarmais.api.domain.endereco.Endereco;
+import com.med.Cuidarmais.api.domain.medico.Especialidade;
+import com.med.Cuidarmais.api.domain.medico.Medico;
+
+public record DadosDetalhamentoMedico(Long id, String nome, String email, String crm, String telefone, Especialidade especialidade, Endereco endereco) {
+
+    public DadosDetalhamentoMedico(Medico medico){
+        this(
+                medico.getId(),
+                medico.getNome(),
+                medico.getEmail(),
+                medico.getCrm(),
+                medico.getTelefone(),
+                medico.getEspecialidade(),
+                medico.getEndereco());
+    }
+
+}
+
+
+Com ele criado agora o erro não persistira, e retornara o status 200 ok perfeitamente seguindo as normas
+
+
+
+POST cadastrar:
+
+    @PostMapping
+    @Transactional
+    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroMed dados, UriComponentsBuilder uriBuilder){
+
+        var medico = new Medico(dados);
+        repository.save(medico);//id do medico que acabou de ser criado no BD
+
+        var uri = uriBuilder.path("/medicos/{id}").buildAndExpand(medico.getId()).toUri(); //parametro dinamico
+        return ResponseEntity.created(uri).body(new DadosDetalhamentoMedico(medico)); //Código 201
+    }
+
+neste cenário aqui, o código em questão a ser retornado é o Código 201 Created
+que diz que o registro foi criado la na api
+
+só que nesta regra, na resposta tem que devolver o 201 e devolver no corpo da
+resposta os dados do novo recurso/registro criados
+
+e devolver tambem, um cabeçalho do protocolo HTTP(Location) que se chama Location
+para que o front-end consiga acessar esse recurso que acabou de ser cadastrado
+
+para fazer isso usaremos alguns recursos do spring boot entçao faremos isso:
+
+
+return ResponseEntity.created(uri).body(dto);
+
+por não existir a variavel uri e a variavel dto vai dar erro de compilação
+mas o caminho é este.
+
+A chamada ResponseEntity.created(uri).body(dto)
+é usada para retornar uma resposta HTTP com um código de status "201 Created".
+
+Aqui está o que cada parte do código faz:
+
+
+
+ResponseEntity: É uma classe do Spring Framework que representa uma resposta HTTP.
+Ela permite configurar o código de status, cabeçalhos e o corpo da resposta.
+
+
+
+.created(uri): Este é um método estático de fábrica da classe ResponseEntity.
+Ele cria uma instância de ResponseEntity com um código de status "201 Created" e também
+permite especificar uma URI (Uniform Resource Identifier) que geralmente representa
+a localização do novo recurso criado. O código "201 Created"
+é comumente usado para indicar que um novo recurso foi criado com sucesso no servidor.
+
+
+
+.body(dto): Este método define o corpo da resposta como o objeto dto,
+que provavelmente representa os dados do recurso recém-criado.
+
+
+
+Portanto, ao retornar ResponseEntity.created(uri).body(dto),
+você está indicando que a resposta da sua API é uma resposta de criação com um código de status "201 Created"
+e o corpo da resposta contém os dados representados pelo objeto dto.
+Isso é comum quando você está criando um novo recurso na sua API
+e deseja informar ao cliente que o recurso foi criado com sucesso,
+fornecendo informações sobre o novo recurso e sua localização.
+
+
+apos isso na linha de cima do return teremos que criar um objeto uri.
+então criamos a variavel uri:
+
+a uri tem que ser o endereço da nossa api que no caso é http://localhost:8080/medicos/{id}
+no caso o id que acabou de ser criado no banco de dados
+
+e tambem, para encapsular e esconder este endereço da api, pois esta rodando localmente,
+para não ficarmos controlondo isso no controller, o spring tem uma classe que ja encapsula
+o endereço da nossa api, e esta classe ja faz a contrução da nossa uri de maneira automatica
+
+para usar esta classe do spring no metodo cadastrar do controller iremos colocar um parametro
+
+
+ public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroMed dados, UriComponentsBuilder uriBuilder){
+
+
+ estavamos recebendo como parametro apenas o DadosCadastroMedico, mas agora tambem receberemos um objeto do tipo
+ URIComponentsBuilder que sabe criar uma uri, e chamaremos o parametro de uriBuilder
+
+var uri = uriBuilder.path() para passar o complemento da url
+
+var uri = uriBuilder.path("/medicos/{id}") e o id do medico que acabou de ser criado no BD
+
+na sequencia temos que substituir este id pelo id que acabou de ser criado dentro do banco
+
+var uri = uriBuilder.path("/medicos/{id}").buildAndExpand()
+
+o id de medicos que é criado no banco de dados ele esta nesta linha
+
+--> repository.save(new Medico(dados));
+
+como passamos ele direto como parametro do metodo save()
+precisamos passar ele primeiro para uma variavel:
+
+var medico = new Medico(dados);
+
+no repository.save(); passamos este medico como parametro
+
+repository.save(medico);
+
+e em seguida no buildAndExpand() colocamos o medico.getId() como parametro passando tambem
+o metodo .toUri()
+
+e no return de baixo colocamos no body
+
+return ResponseEntity.created(uri).body(new DadosDetalahmento(medico));
+
+
+e assim temos a mudança para seguimento de regras do protocolo HTTP
+
+
+
+
+
+
+

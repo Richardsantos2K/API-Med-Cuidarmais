@@ -1,5 +1,7 @@
-package com.med.Cuidarmais.api.domain.paciente;
+package com.med.Cuidarmais.api.domain.paciente.dto;
 
+
+import com.med.Cuidarmais.api.domain.paciente.Paciente;
 
 public record DadosListagemPaciente (Long id, String nome, String email, String cpf){
 

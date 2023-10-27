@@ -1,6 +1,8 @@
 package com.med.Cuidarmais.api.domain.paciente;
 
 import com.med.Cuidarmais.api.domain.endereco.Endereco;
+import com.med.Cuidarmais.api.domain.paciente.dto.DadosAtualizacaoPaciente;
+import com.med.Cuidarmais.api.domain.paciente.dto.DadosCadastroPaciente;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

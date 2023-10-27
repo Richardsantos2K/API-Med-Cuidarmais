@@ -1,6 +1,7 @@
-package com.med.Cuidarmais.api.domain.medico;
+package com.med.Cuidarmais.api.domain.medico.dto;
 
 import com.med.Cuidarmais.api.domain.endereco.DadosEndereco;
+import com.med.Cuidarmais.api.domain.medico.Especialidade;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -13,6 +14,7 @@ public record DadosCadastroMed(
 
         @NotBlank
         @Email // como é um email é obrigatorio ter @ e o dominio deste email por isso a anotação @Email
+        @Pattern(regexp = "^[a-z0-9_.+-]+@(?:hotmail|gmail|outlook)\\.com$")
         String email,
 
         @NotBlank
@@ -26,7 +28,7 @@ public record DadosCadastroMed(
 
         @NotNull
         @Valid/*@Valid é usado para garantir que as anotações de validação do Bean Validation sejam aplicadas a um DTO, incluindo seus atributos, quando o DTO é utilizado dentro de outro DTO.*/
-        Especialidade especialidade,
+                Especialidade especialidade,
 
         @Valid
         DadosEndereco endereco) {
