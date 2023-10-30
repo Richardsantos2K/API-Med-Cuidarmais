@@ -1,0 +1,2 @@
+iremos fazer uma alteração no application.properties para que mensagem
+de erro 500 não retorne a "trace" da nossa api, e sim apenas uma mensagem
